@@ -40,6 +40,18 @@ public class Server {
     private static class Handler extends Thread{
         private Socket socket;
 
+        private void serverMainLoop(Connection connection, String userName) throws IOException, ClassNotFoundException {
+            while (true){
+                String messageText = "";
+                Message message = connection.receive();
+                if (message.getType() == MessageType.TEXT){
+                    messageText = userName + ": " + message.getData();
+                    Server.sendBroadcastMessage(new Message(MessageType.TEXT, messageText));
+                    }
+            }
+
+        }
+
         private void sendListOfUsers(Connection connection, String userName) throws IOException {
             for (String name: connectionMap.keySet()) {
                 if (!name.equals(userName)){
