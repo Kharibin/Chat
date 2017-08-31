@@ -6,6 +6,7 @@ import com.javarush.task.task30.task3008.Message;
 import com.javarush.task.task30.task3008.MessageType;
 
 import java.io.IOException;
+import java.net.Socket;
 
 public class Client extends Thread{
     protected Connection connection;
@@ -29,8 +30,8 @@ public class Client extends Thread{
                return;
            }
        }
+       ConsoleHelper.writeMessage("connection established");
        while (clientConnected){
-           ConsoleHelper.writeMessage("connection established");
            String text = ConsoleHelper.readString();
            if (text.equals("exit")) break;
            if (shouldSendTextFromConsole()) try {
@@ -123,6 +124,19 @@ public class Client extends Thread{
                         thisType != MessageType.USER_ADDED && thisType != MessageType.USER_REMOVED) {
                     throw new IOException("Unexpected MessageType");
                 }
+            }
+        }
+
+        public void run(){
+            Socket socket;
+            try {
+                socket = new Socket(getServerAddress(), getServerPort());
+                connection = new Connection(socket);
+                clientHandshake();
+                clientMainLoop();
+            } catch (IOException | ClassNotFoundException e) {
+                e.printStackTrace();
+                notifyConnectionStatusChanged(false);
             }
         }
 

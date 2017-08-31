@@ -27,9 +27,6 @@ public class Server {
             System.out.println("Server started");
             while (true) {
                 new Handler(serverSocket.accept()).start();
-                /*Socket socket = serverSocket.accept();
-                Handler handler = new Handler(socket);
-                handler.start();*/
             }
         } catch (Exception e) {
             e.printStackTrace();
