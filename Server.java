@@ -24,7 +24,7 @@ public class Server {
     public static void main(String[] args) {
 
         try (ServerSocket serverSocket = new ServerSocket(ConsoleHelper.readInt())) {
-            System.out.println("Сервер запущен");
+            System.out.println("Server started");
             while (true) {
                 new Handler(serverSocket.accept()).start();
                 /*Socket socket = serverSocket.accept();
@@ -80,6 +80,32 @@ public class Server {
                     }
                 }
             }
+        }
+
+        @Override
+        public void run() {
+            System.out.println("new connection established with " + this.socket.getRemoteSocketAddress());
+            String name = null;
+            try (Connection connection = new Connection(socket)) {
+                name = this.serverHandshake(connection);
+                Server.sendBroadcastMessage(new Message(MessageType.USER_ADDED, name));
+                this.sendListOfUsers(connection, name);
+                this.serverMainLoop(connection, name);
+            }
+            catch (ClassNotFoundException e2){
+                e2.printStackTrace();
+            }
+            catch (IOException e){
+                e.printStackTrace();
+            }finally {
+                if (name != null) {
+                    connectionMap.remove(name);
+                    sendBroadcastMessage(new Message(MessageType.USER_REMOVED, name));
+                }
+                ConsoleHelper.writeMessage("Closed connection to a remote socket address: "); // + socketAddress);
+            }
+
+
         }
     }
 }
