@@ -6,6 +6,7 @@ public class ClientGuiController extends Client{
     private ClientGuiModel model = new ClientGuiModel();
     private ClientGuiView view = new ClientGuiView(this);
 
+
     protected SocketThread getSocketThread(){
         return new GuiSocketThread();
     }
@@ -28,7 +29,7 @@ public class ClientGuiController extends Client{
         return view.getUserName();
     }
 
-    protected ClientGuiModel getModel(){
+    public ClientGuiModel getModel(){
         return this.model;
     }
 
